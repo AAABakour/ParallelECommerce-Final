@@ -1,0 +1,140 @@
+@ParallelECommerce_HostAddress = http://localhost:5164
+
+GET {{ParallelECommerce_HostAddress}}/
+Accept: application/json
+
+### Requirement 1 - Race Condition
+POST {{ParallelECommerce_HostAddress}}/demo/race/before
+Accept: application/json
+
+###
+POST {{ParallelECommerce_HostAddress}}/demo/race/after
+Accept: application/json
+
+### Requirement 2 - Capacity Control
+POST {{ParallelECommerce_HostAddress}}/capacity/reset
+Accept: application/json
+
+###
+POST {{ParallelECommerce_HostAddress}}/capacity/before/work
+Accept: application/json
+
+###
+POST {{ParallelECommerce_HostAddress}}/capacity/after/work
+Accept: application/json
+
+###
+GET {{ParallelECommerce_HostAddress}}/capacity/metrics
+Accept: application/json
+
+### Requirement 3 - Async Queue
+POST {{ParallelECommerce_HostAddress}}/notifications/reset
+Accept: application/json
+
+###
+POST {{ParallelECommerce_HostAddress}}/orders/before-sync
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "quantity": 1,
+  "customerEmail": "student@example.com"
+}
+
+###
+POST {{ParallelECommerce_HostAddress}}/orders/after-async
+Content-Type: application/json
+
+{
+  "productId": 1,
+  "quantity": 1,
+  "customerEmail": "student@example.com"
+}
+
+###
+GET {{ParallelECommerce_HostAddress}}/notifications/status
+Accept: application/json
+
+### Requirement 4 - Batch Processing
+POST {{ParallelECommerce_HostAddress}}/batch/reset
+Accept: application/json
+
+###
+POST {{ParallelECommerce_HostAddress}}/batch/before/sequential?totalRecords=100
+Accept: application/json
+
+###
+POST {{ParallelECommerce_HostAddress}}/batch/after/start-daily-sales-job?totalRecords=100&chunkSize=10&maxParallelChunks=4
+Accept: application/json
+
+###
+GET {{ParallelECommerce_HostAddress}}/batch/metrics
+Accept: application/json
+
+### Requirement 5 - Load Balancing
+POST {{ParallelECommerce_HostAddress}}/load-balancer/reset
+Accept: application/json
+
+###
+POST {{ParallelECommerce_HostAddress}}/demo/load-balancing/before
+Accept: application/json
+
+###
+POST {{ParallelECommerce_HostAddress}}/demo/load-balancing/after
+Accept: application/json
+
+###
+POST {{ParallelECommerce_HostAddress}}/demo/load-balancing/after-health-check
+Accept: application/json
+
+###
+GET {{ParallelECommerce_HostAddress}}/load-balancer/metrics
+Accept: application/json
+
+### Monitoring
+GET {{ParallelECommerce_HostAddress}}/monitoring/metrics
+Accept: application/json
+
+###
+GET {{ParallelECommerce_HostAddress}}/monitoring/resources
+Accept: application/json
+
+### Requirement 6 - Distributed Caching / Cache-Aside
+POST {{ParallelECommerce_HostAddress}}/cache/reset
+Accept: application/json
+
+###
+GET {{ParallelECommerce_HostAddress}}/cache/before/products/1
+Accept: application/json
+
+###
+GET {{ParallelECommerce_HostAddress}}/cache/after/products/1
+Accept: application/json
+
+###
+GET {{ParallelECommerce_HostAddress}}/cache/before/popular-products?count=3
+Accept: application/json
+
+###
+GET {{ParallelECommerce_HostAddress}}/cache/after/popular-products?count=3
+Accept: application/json
+
+###
+GET {{ParallelECommerce_HostAddress}}/cache/before/stock/1
+Accept: application/json
+
+###
+GET {{ParallelECommerce_HostAddress}}/cache/after/stock/1
+Accept: application/json
+
+###
+POST {{ParallelECommerce_HostAddress}}/demo/cache/before
+Accept: application/json
+
+###
+POST {{ParallelECommerce_HostAddress}}/demo/cache/after
+Accept: application/json
+
+###
+GET {{ParallelECommerce_HostAddress}}/cache/metrics
+Accept: application/json

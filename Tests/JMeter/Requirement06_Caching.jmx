@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="ParallelECommerce - Requirement 06 Caching" enabled="true">
+      <stringProp name="TestPlan.comments">Requirement 06: cache-aside before/after demo, cache metrics, and concurrent cached reads. Capture Summary Report, View Results Tree, and /cache/metrics screenshots.</stringProp>
+      <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+    </TestPlan>
+    <hashTree>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="BASE_PROTOCOL" elementType="Argument">
+            <stringProp name="Argument.name">BASE_PROTOCOL</stringProp>
+            <stringProp name="Argument.value">http</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="HOST" elementType="Argument">
+            <stringProp name="Argument.name">HOST</stringProp>
+            <stringProp name="Argument.value">localhost</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="PORT" elementType="Argument">
+            <stringProp name="Argument.name">PORT</stringProp>
+            <stringProp name="Argument.value">5164</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP Request Defaults" enabled="true">
+        <stringProp name="HTTPSampler.domain">${HOST}</stringProp>
+        <stringProp name="HTTPSampler.port">${PORT}</stringProp>
+        <stringProp name="HTTPSampler.protocol">${BASE_PROTOCOL}</stringProp>
+        <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+          <collectionProp name="Arguments.arguments"/>
+        </elementProp>
+        <stringProp name="HTTPSampler.implementation"></stringProp>
+      </ConfigTestElement>
+      <hashTree/>
+      <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="JSON Headers" enabled="true">
+        <collectionProp name="HeaderManager.headers">
+          <elementProp name="Content-Type" elementType="Header">
+            <stringProp name="Header.name">Content-Type</stringProp>
+            <stringProp name="Header.value">application/json</stringProp>
+          </elementProp>
+          <elementProp name="Accept" elementType="Header">
+            <stringProp name="Header.name">Accept</stringProp>
+            <stringProp name="Header.value">application/json</stringProp>
+          </elementProp>
+        </collectionProp>
+      </HeaderManager>
+      <hashTree/>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="00 - Reset monitoring and cache metrics" enabled="true">
+  <intProp name="ThreadGroup.num_threads">1</intProp>
+  <intProp name="ThreadGroup.ramp_time">1</intProp>
+  <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+  <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+  <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+    <stringProp name="LoopController.loops">1</stringProp>
+    <boolProp name="LoopController.continue_forever">false</boolProp>
+  </elementProp>
+</ThreadGroup>
+<hashTree>
+
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /monitoring/reset" enabled="true">
+  <stringProp name="HTTPSampler.domain"></stringProp>
+  <stringProp name="HTTPSampler.port"></stringProp>
+  <stringProp name="HTTPSampler.protocol"></stringProp>
+  <stringProp name="HTTPSampler.path">/monitoring/reset</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <stringProp name="HTTPSampler.method">POST</stringProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree/>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /cache/reset" enabled="true">
+  <stringProp name="HTTPSampler.domain"></stringProp>
+  <stringProp name="HTTPSampler.port"></stringProp>
+  <stringProp name="HTTPSampler.protocol"></stringProp>
+  <stringProp name="HTTPSampler.path">/cache/reset</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <stringProp name="HTTPSampler.method">POST</stringProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree/>
+</hashTree>
+<ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="06A - Requirement 6 BEFORE - repeated reads without cache" enabled="true">
+  <intProp name="ThreadGroup.num_threads">1</intProp>
+  <intProp name="ThreadGroup.ramp_time">1</intProp>
+  <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+  <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+  <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+    <stringProp name="LoopController.loops">1</stringProp>
+    <boolProp name="LoopController.continue_forever">false</boolProp>
+  </elementProp>
+</ThreadGroup>
+<hashTree>
+
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REQ06 BEFORE - POST /demo/cache/before" enabled="true">
+  <stringProp name="HTTPSampler.domain"></stringProp>
+  <stringProp name="HTTPSampler.port"></stringProp>
+  <stringProp name="HTTPSampler.protocol"></stringProp>
+  <stringProp name="HTTPSampler.path">/demo/cache/before</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <stringProp name="HTTPSampler.method">POST</stringProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree/>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REQ06 BEFORE METRICS - GET /cache/metrics" enabled="true">
+  <stringProp name="HTTPSampler.domain"></stringProp>
+  <stringProp name="HTTPSampler.port"></stringProp>
+  <stringProp name="HTTPSampler.protocol"></stringProp>
+  <stringProp name="HTTPSampler.path">/cache/metrics</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree/>
+</hashTree>
+<ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="06B - Reset before after-cache demo" enabled="true">
+  <intProp name="ThreadGroup.num_threads">1</intProp>
+  <intProp name="ThreadGroup.ramp_time">1</intProp>
+  <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+  <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+  <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+    <stringProp name="LoopController.loops">1</stringProp>
+    <boolProp name="LoopController.continue_forever">false</boolProp>
+  </elementProp>
+</ThreadGroup>
+<hashTree>
+
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /cache/reset" enabled="true">
+  <stringProp name="HTTPSampler.domain"></stringProp>
+  <stringProp name="HTTPSampler.port"></stringProp>
+  <stringProp name="HTTPSampler.protocol"></stringProp>
+  <stringProp name="HTTPSampler.path">/cache/reset</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <stringProp name="HTTPSampler.method">POST</stringProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree/>
+</hashTree>
+<ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="06C - Requirement 6 AFTER - repeated reads with cache" enabled="true">
+  <intProp name="ThreadGroup.num_threads">1</intProp>
+  <intProp name="ThreadGroup.ramp_time">1</intProp>
+  <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+  <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+  <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+    <stringProp name="LoopController.loops">1</stringProp>
+    <boolProp name="LoopController.continue_forever">false</boolProp>
+  </elementProp>
+</ThreadGroup>
+<hashTree>
+
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REQ06 AFTER - POST /demo/cache/after" enabled="true">
+  <stringProp name="HTTPSampler.domain"></stringProp>
+  <stringProp name="HTTPSampler.port"></stringProp>
+  <stringProp name="HTTPSampler.protocol"></stringProp>
+  <stringProp name="HTTPSampler.path">/demo/cache/after</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <stringProp name="HTTPSampler.method">POST</stringProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree/>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REQ06 AFTER METRICS - GET /cache/metrics" enabled="true">
+  <stringProp name="HTTPSampler.domain"></stringProp>
+  <stringProp name="HTTPSampler.port"></stringProp>
+  <stringProp name="HTTPSampler.protocol"></stringProp>
+  <stringProp name="HTTPSampler.path">/cache/metrics</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree/>
+</hashTree>
+<ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="06D - Warm cache before concurrent users" enabled="true">
+  <intProp name="ThreadGroup.num_threads">1</intProp>
+  <intProp name="ThreadGroup.ramp_time">1</intProp>
+  <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+  <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+  <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+    <stringProp name="LoopController.loops">1</stringProp>
+    <boolProp name="LoopController.continue_forever">false</boolProp>
+  </elementProp>
+</ThreadGroup>
+<hashTree>
+
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="WARM - GET /cache/after/products/1" enabled="true">
+  <stringProp name="HTTPSampler.domain"></stringProp>
+  <stringProp name="HTTPSampler.port"></stringProp>
+  <stringProp name="HTTPSampler.protocol"></stringProp>
+  <stringProp name="HTTPSampler.path">/cache/after/products/1</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree/>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="WARM - GET /cache/after/popular-products?count=3" enabled="true">
+  <stringProp name="HTTPSampler.domain"></stringProp>
+  <stringProp name="HTTPSampler.port"></stringProp>
+  <stringProp name="HTTPSampler.protocol"></stringProp>
+  <stringProp name="HTTPSampler.path">/cache/after/popular-products?count=3</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree/>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="WARM - GET /cache/after/stock/1" enabled="true">
+  <stringProp name="HTTPSampler.domain"></stringProp>
+  <stringProp name="HTTPSampler.port"></stringProp>
+  <stringProp name="HTTPSampler.protocol"></stringProp>
+  <stringProp name="HTTPSampler.path">/cache/after/stock/1</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree/>
+</hashTree>
+<ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="06E - Concurrent cache reads - 100 users" enabled="true">
+  <intProp name="ThreadGroup.num_threads">100</intProp>
+  <intProp name="ThreadGroup.ramp_time">0</intProp>
+  <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+  <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+  <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+    <stringProp name="LoopController.loops">1</stringProp>
+    <boolProp name="LoopController.continue_forever">false</boolProp>
+  </elementProp>
+</ThreadGroup>
+<hashTree>
+<SyncTimer guiclass="TestBeanGUI" testclass="SyncTimer" testname="Synchronize 100 users" enabled="true">
+  <intProp name="groupSize">100</intProp>
+  <longProp name="timeoutInMs">15000</longProp>
+</SyncTimer>
+<hashTree/>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REQ06 CONCURRENT - GET /cache/after/products/1" enabled="true">
+  <stringProp name="HTTPSampler.domain"></stringProp>
+  <stringProp name="HTTPSampler.port"></stringProp>
+  <stringProp name="HTTPSampler.protocol"></stringProp>
+  <stringProp name="HTTPSampler.path">/cache/after/products/1</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree/>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REQ06 CONCURRENT - GET /cache/after/popular-products?count=3" enabled="true">
+  <stringProp name="HTTPSampler.domain"></stringProp>
+  <stringProp name="HTTPSampler.port"></stringProp>
+  <stringProp name="HTTPSampler.protocol"></stringProp>
+  <stringProp name="HTTPSampler.path">/cache/after/popular-products?count=3</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree/>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="REQ06 CONCURRENT - GET /cache/after/stock/1" enabled="true">
+  <stringProp name="HTTPSampler.domain"></stringProp>
+  <stringProp name="HTTPSampler.port"></stringProp>
+  <stringProp name="HTTPSampler.protocol"></stringProp>
+  <stringProp name="HTTPSampler.path">/cache/after/stock/1</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree/>
+</hashTree>
+<ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="06F - Final cache and resource metrics" enabled="true">
+  <intProp name="ThreadGroup.num_threads">1</intProp>
+  <intProp name="ThreadGroup.ramp_time">1</intProp>
+  <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+  <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+  <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+    <stringProp name="LoopController.loops">1</stringProp>
+    <boolProp name="LoopController.continue_forever">false</boolProp>
+  </elementProp>
+</ThreadGroup>
+<hashTree>
+
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="FINAL - GET /cache/metrics" enabled="true">
+  <stringProp name="HTTPSampler.domain"></stringProp>
+  <stringProp name="HTTPSampler.port"></stringProp>
+  <stringProp name="HTTPSampler.protocol"></stringProp>
+  <stringProp name="HTTPSampler.path">/cache/metrics</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree/>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="FINAL - GET /monitoring/metrics" enabled="true">
+  <stringProp name="HTTPSampler.domain"></stringProp>
+  <stringProp name="HTTPSampler.port"></stringProp>
+  <stringProp name="HTTPSampler.protocol"></stringProp>
+  <stringProp name="HTTPSampler.path">/monitoring/metrics</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree/>
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="FINAL - GET /monitoring/resources" enabled="true">
+  <stringProp name="HTTPSampler.domain"></stringProp>
+  <stringProp name="HTTPSampler.port"></stringProp>
+  <stringProp name="HTTPSampler.protocol"></stringProp>
+  <stringProp name="HTTPSampler.path">/monitoring/resources</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <stringProp name="HTTPSampler.method">GET</stringProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+    <collectionProp name="Arguments.arguments"/>
+  </elementProp>
+</HTTPSamplerProxy>
+<hashTree/>
+</hashTree>
+      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
+  <boolProp name="ResultCollector.error_logging">false</boolProp>
+  <objProp>
+    <name>saveConfig</name>
+    <value class="SampleSaveConfiguration">
+      <time>true</time>
+      <latency>true</latency>
+      <timestamp>true</timestamp>
+      <success>true</success>
+      <label>true</label>
+      <code>true</code>
+      <message>true</message>
+      <threadName>true</threadName>
+      <dataType>true</dataType>
+      <encoding>false</encoding>
+      <assertions>true</assertions>
+      <subresults>true</subresults>
+      <responseData>false</responseData>
+      <samplerData>false</samplerData>
+      <xml>false</xml>
+      <fieldNames>true</fieldNames>
+      <responseHeaders>false</responseHeaders>
+      <requestHeaders>false</requestHeaders>
+      <responseDataOnError>false</responseDataOnError>
+      <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+      <assertionsResultsToSave>0</assertionsResultsToSave>
+      <bytes>true</bytes>
+      <sentBytes>true</sentBytes>
+      <url>true</url>
+      <threadCounts>true</threadCounts>
+      <idleTime>true</idleTime>
+      <connectTime>true</connectTime>
+    </value>
+  </objProp>
+  <stringProp name="filename"></stringProp>
+</ResultCollector>
+<hashTree/>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+  <boolProp name="ResultCollector.error_logging">false</boolProp>
+  <objProp>
+    <name>saveConfig</name>
+    <value class="SampleSaveConfiguration">
+      <time>true</time>
+      <latency>true</latency>
+      <timestamp>true</timestamp>
+      <success>true</success>
+      <label>true</label>
+      <code>true</code>
+      <message>true</message>
+      <threadName>true</threadName>
+      <dataType>true</dataType>
+      <encoding>false</encoding>
+      <assertions>true</assertions>
+      <subresults>true</subresults>
+      <responseData>false</responseData>
+      <samplerData>false</samplerData>
+      <xml>false</xml>
+      <fieldNames>true</fieldNames>
+      <responseHeaders>false</responseHeaders>
+      <requestHeaders>false</requestHeaders>
+      <responseDataOnError>false</responseDataOnError>
+      <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+      <assertionsResultsToSave>0</assertionsResultsToSave>
+      <bytes>true</bytes>
+      <sentBytes>true</sentBytes>
+      <url>true</url>
+      <threadCounts>true</threadCounts>
+      <idleTime>true</idleTime>
+      <connectTime>true</connectTime>
+    </value>
+  </objProp>
+  <stringProp name="filename"></stringProp>
+</ResultCollector>
+<hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
