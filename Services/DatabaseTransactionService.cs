@@ -5,22 +5,29 @@ using ParallelECommerce.Entities;
 
 namespace ParallelECommerce.Services;
 
-public sealed class DatabaseTransactionService(IDbContextFactory<ParallelECommerceDbContext> dbContextFactory)
+public sealed class DatabaseTransactionService
 {
     private const int DemoProductId = 1;
     private const int InitialStock = 5;
     private const string RequirementName = "Requirement 08 - Real DB ACID Transaction";
     private const string IsolationLevelName = "Serializable";
 
+    private readonly IDbContextFactory<ParallelECommerceDbContext> _dbFactory;
+
+    public DatabaseTransactionService(IDbContextFactory<ParallelECommerceDbContext> dbFactory)
+    {
+        _dbFactory = dbFactory;
+    }
+
     public async Task<object> ResetAsync(CancellationToken cancellationToken = default)
     {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
-        await dbContext.Database.EnsureCreatedAsync(cancellationToken);
+        await using var db = await _dbFactory.CreateDbContextAsync(cancellationToken);
+        await db.Database.EnsureCreatedAsync(cancellationToken);
 
-        var removedOrders = await dbContext.Orders.ExecuteDeleteAsync(cancellationToken);
-        var removedPayments = await dbContext.Payments.ExecuteDeleteAsync(cancellationToken);
+        var removedOrders = await db.Orders.ExecuteDeleteAsync(cancellationToken);
+        var removedPayments = await db.Payments.ExecuteDeleteAsync(cancellationToken);
 
-        var product = await dbContext.Products
+        var product = await db.Products
             .SingleOrDefaultAsync(product => product.Id == DemoProductId, cancellationToken);
 
         if (product is null)
@@ -34,14 +41,14 @@ public sealed class DatabaseTransactionService(IDbContextFactory<ParallelECommer
                 PopularityScore = 95
             };
 
-            dbContext.Products.Add(product);
+            db.Products.Add(product);
         }
         else
         {
             product.StockQuantity = InitialStock;
         }
 
-        await dbContext.SaveChangesAsync(cancellationToken);
+        await db.SaveChangesAsync(cancellationToken);
 
         return new
         {
@@ -74,10 +81,10 @@ public sealed class DatabaseTransactionService(IDbContextFactory<ParallelECommer
             };
         }
 
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
-        await dbContext.Database.EnsureCreatedAsync(cancellationToken);
+        await using var db = await _dbFactory.CreateDbContextAsync(cancellationToken);
+        await db.Database.EnsureCreatedAsync(cancellationToken);
 
-        await using var transaction = await dbContext.Database.BeginTransactionAsync(
+        await using var transaction = await db.Database.BeginTransactionAsync(
             IsolationLevel.Serializable,
             cancellationToken);
 
@@ -85,7 +92,7 @@ public sealed class DatabaseTransactionService(IDbContextFactory<ParallelECommer
 
         try
         {
-            var product = await dbContext.Products
+            var product = await db.Products
                 .SingleOrDefaultAsync(product => product.Id == productId, cancellationToken);
 
             if (product is null)
@@ -134,8 +141,8 @@ public sealed class DatabaseTransactionService(IDbContextFactory<ParallelECommer
                 CapturedAtUtc = DateTime.UtcNow
             };
 
-            dbContext.Payments.Add(payment);
-            await dbContext.SaveChangesAsync(cancellationToken);
+            db.Payments.Add(payment);
+            await db.SaveChangesAsync(cancellationToken);
 
             if (simulateFailureAfterPayment)
             {
@@ -153,8 +160,8 @@ public sealed class DatabaseTransactionService(IDbContextFactory<ParallelECommer
                 CreatedAtUtc = DateTime.UtcNow
             };
 
-            dbContext.Orders.Add(order);
-            await dbContext.SaveChangesAsync(cancellationToken);
+            db.Orders.Add(order);
+            await db.SaveChangesAsync(cancellationToken);
 
             await transaction.CommitAsync(cancellationToken);
 
@@ -229,21 +236,21 @@ public sealed class DatabaseTransactionService(IDbContextFactory<ParallelECommer
         string paymentReference,
         CancellationToken cancellationToken)
     {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+        await using var db = await _dbFactory.CreateDbContextAsync(cancellationToken);
 
-        var stockQuantity = await dbContext.Products
+        var stockQuantity = await db.Products
             .AsNoTracking()
             .Where(product => product.Id == productId)
             .Select(product => product.StockQuantity)
             .SingleOrDefaultAsync(cancellationToken);
 
-        var payment = await dbContext.Payments
+        var payment = await db.Payments
             .AsNoTracking()
             .Where(payment => payment.PaymentReference == paymentReference)
             .Select(payment => new { payment.Status })
             .SingleOrDefaultAsync(cancellationToken);
 
-        var order = await dbContext.Orders
+        var order = await db.Orders
             .AsNoTracking()
             .Where(order => order.PaymentReference == paymentReference)
             .Select(order => new { order.Status })

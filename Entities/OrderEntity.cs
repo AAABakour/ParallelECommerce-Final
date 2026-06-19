@@ -17,4 +17,6 @@ public sealed class OrderEntity
     public string Status { get; set; } = string.Empty;
 
     public DateTime CreatedAtUtc { get; set; }
+
+    public ProductEntity? Product { get; set; }
 }

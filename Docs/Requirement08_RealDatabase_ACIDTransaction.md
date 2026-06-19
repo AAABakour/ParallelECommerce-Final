@@ -72,6 +72,12 @@ Endpoints/TransactionIntegrityEndpoints.cs
 Docs/Requirement08_TransactionIntegrity.md
 ```
 
+## How This Improves The Older Simulation Demo
+
+The older Requirement 08 demo is still useful because it explains the ACID idea with in-memory state, rollback records, and concurrent checkout simulations. The new real database demo applies the same business rule with SQL Server.
+
+The improvement is that rollback is handled by an actual database transaction. Payment insert, stock update, and order insert are sent to SQL Server inside one transaction. If the simulated failure happens after payment, SQL Server rolls back all changes together. This gives stronger proof for the final delivery while keeping the older explanation endpoints available.
+
 ## Endpoints
 
 ```http

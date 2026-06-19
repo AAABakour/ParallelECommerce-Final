@@ -4,7 +4,7 @@ using ParallelECommerce.Entities;
 
 namespace ParallelECommerce.Services;
 
-public sealed class DatabaseConcurrencyService(IDbContextFactory<ParallelECommerceDbContext> dbContextFactory)
+public sealed class DatabaseConcurrencyService(IDbContextFactory<ParallelECommerceDbContext> dbFactory)
 {
     private const int ProductId = 1;
     private const int InitialStock = 5;
@@ -14,7 +14,7 @@ public sealed class DatabaseConcurrencyService(IDbContextFactory<ParallelECommer
 
     public async Task<object> ResetAsync(CancellationToken cancellationToken = default)
     {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+        await using var dbContext = await dbFactory.CreateDbContextAsync(cancellationToken);
         await dbContext.Database.EnsureCreatedAsync(cancellationToken);
 
         var product = await dbContext.Products
@@ -116,7 +116,7 @@ public sealed class DatabaseConcurrencyService(IDbContextFactory<ParallelECommer
 
         for (var attempt = 1; attempt <= MaxConcurrencyRetries + 1; attempt++)
         {
-            await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+            await using var dbContext = await dbFactory.CreateDbContextAsync(cancellationToken);
 
             var product = await dbContext.Products
                 .SingleAsync(product => product.Id == ProductId, cancellationToken);
@@ -182,7 +182,7 @@ public sealed class DatabaseConcurrencyService(IDbContextFactory<ParallelECommer
 
     private async Task<int> GetCurrentStockAsync(CancellationToken cancellationToken)
     {
-        await using var dbContext = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+        await using var dbContext = await dbFactory.CreateDbContextAsync(cancellationToken);
 
         return await dbContext.Products
             .AsNoTracking()

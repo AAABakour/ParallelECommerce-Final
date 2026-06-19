@@ -76,7 +76,7 @@ public sealed class ParallelECommerceDbContext(DbContextOptions<ParallelECommerc
             entity.HasIndex(order => order.PaymentReference)
                 .IsUnique();
 
-            entity.HasOne<ProductEntity>()
+            entity.HasOne(order => order.Product)
                 .WithMany()
                 .HasForeignKey(order => order.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);

@@ -67,6 +67,12 @@ Endpoints/DistributedLockEndpoints.cs
 Docs/Requirement07_DistributedLock.md
 ```
 
+## How This Improves The Older Simulation Demo
+
+The older Requirement 07 demo is still useful because it explains distributed locks with Redis for business resources such as coupons and duplicate payment callbacks. The new real database demo focuses on the exact course requirement for sensitive inventory quantities.
+
+The improvement is that inventory stock is now protected by SQL Server and EF Core `RowVersion` concurrency checks. Conflicts are produced by real database writes, not by in-memory counters or simulated locks. This makes the result stronger for the final delivery while preserving the old explanatory demo.
+
 ## Endpoints
 
 ```http

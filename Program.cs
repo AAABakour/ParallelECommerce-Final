@@ -13,9 +13,6 @@ builder.Services.AddOpenApi();
 var defaultConnection = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("ConnectionStrings:DefaultConnection is required.");
 
-builder.Services.AddDbContext<ParallelECommerceDbContext>(options =>
-    options.UseSqlServer(defaultConnection));
-
 builder.Services.AddDbContextFactory<ParallelECommerceDbContext>(options =>
     options.UseSqlServer(defaultConnection));
 
